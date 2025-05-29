@@ -6,6 +6,7 @@ translator:
 layout:
   type: 'dit'
   device: 'cuda'
+  dpi: 200
 
 ocr:
   type: 'paddle'
@@ -13,4 +14,3 @@ ocr:
 
 font:
   type: 'nanum'  # use 'nanum' for NanumMyeongjo
-

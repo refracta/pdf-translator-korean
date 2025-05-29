@@ -58,7 +58,7 @@ class TranslateApi:
         Tokenizer for the translation model
     """
 
-    DPI = 200
+    DPI = cfg.get('layout', {}).get('dpi', 200)
 
     def __init__(self, model_root_dir: Path = Path("/app/models/")):
         self.app = FastAPI()
