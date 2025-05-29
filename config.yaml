@@ -1,5 +1,6 @@
 translator:
-  type: google_translate #openai
+  type: openai
+  model: gpt-4o
   openai_api_key: YOUR-KEY-GOES-HERE
 
 layout:
@@ -11,4 +12,5 @@ ocr:
   device: 'cuda'
 
 font:
-  type: 'simple'  # use 'nanum' for NanumMyeongjo
+  type: 'nanum'  # use 'nanum' for NanumMyeongjo
+

@@ -13,8 +13,8 @@
 - translate PDF files while preserving layout
 
 - translation engines:
-   - google translate (default)
-   - openAI (best)
+   - openAI (default)
+   - google translate
 
 - layout recognition engines:
    - UniLM DiT
@@ -37,9 +37,8 @@
    cd pdf_translator
 ```
 
-2. **Edit config.yaml and enter openai api key**
-change type to 'openai' and enter your key under openai_api_key
-if this is not changed translation engine will default to google translate
+2. **Edit config.yaml and enter your OpenAI API key**
+Enter your key under `openai_api_key`.
 
 
 ### docker installation
