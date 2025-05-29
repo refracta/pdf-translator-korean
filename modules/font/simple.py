@@ -1,6 +1,5 @@
 import numpy as np
 from tqdm import tqdm
-from PIL import ImageFont
 from utils import fw_fill
 from .base import FontBase
 
@@ -39,25 +38,18 @@ class SimpleFont(FontBase):
         else:
             font_size = self.FONT_SIZE - 6
 
-        while font_size > 10:
+        ygain = int(font_size * 1.15)
+
+        max_width_chars = max(1, int(width / (font_size / 2.4)) - 1)
+        processed = fw_fill(text, width=max_width_chars)
+        lines = len(processed.split("\n"))
+
+        while lines * ygain > height and font_size > 10:
+            font_size -= 1
             ygain = int(font_size * 1.15)
             max_width_chars = max(1, int(width / (font_size / 2.4)) - 1)
             processed = fw_fill(text, width=max_width_chars)
-            lines = processed.split("\n")
+            lines = len(processed.split("\n"))
 
-            font = ImageFont.truetype("fonts/TimesNewRoman.ttf", int(font_size))
-            max_line_width = 0
-            for l in lines:
-                bbox = font.getbbox(l)
-                line_width = bbox[2] - bbox[0]
-                if line_width > max_line_width:
-                    max_line_width = line_width
-
-            if len(lines) * ygain <= height and max_line_width <= width:
-                break
-
-            font_size -= 1
-
-        ygain = int(font_size * 1.15)
         return "TimesNewRoman.ttf", int(font_size), int(ygain)
                 
