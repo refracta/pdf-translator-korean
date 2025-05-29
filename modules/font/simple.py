@@ -2,7 +2,7 @@ import numpy as np
 from tqdm import tqdm
 from PIL import ImageFont
 import math
-from utils import fw_fill, average_char_width
+from utils import fill_text_to_width
 from .base import FontBase
 
 class SimpleFont(FontBase):
@@ -43,18 +43,14 @@ class SimpleFont(FontBase):
         ygain = int(font_size * 1.15)
 
         fnt = ImageFont.truetype('fonts/TimesNewRoman.ttf', int(font_size))
-        char_w = average_char_width(fnt)
-        max_width_chars = max(1, math.ceil(width / char_w))
-        processed = fw_fill(text, width=max_width_chars)
+        processed = fill_text_to_width(text, fnt, width)
         lines = len(processed.split("\n"))
 
         while lines * ygain > height and font_size > 10:
             font_size -= 1
             ygain = int(font_size * 1.15)
             fnt = ImageFont.truetype('fonts/TimesNewRoman.ttf', int(font_size))
-            char_w = average_char_width(fnt)
-            max_width_chars = max(1, math.ceil(width / char_w))
-            processed = fw_fill(text, width=max_width_chars)
+            processed = fill_text_to_width(text, fnt, width)
             lines = len(processed.split("\n"))
 
         return "TimesNewRoman.ttf", int(font_size), int(ygain)
