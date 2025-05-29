@@ -102,7 +102,7 @@ class TranslateOpenAIGPT(TranslateBase):
     def get_languages(self):
         return langs
 
-    def translate(self, text: str, from_lang='ENGLISH', to_lang='SLOVENIAN') -> str:
+    def translate(self, text: str, from_lang='ENGLISH', to_lang='KOREAN') -> str:
         response = self.client.chat.completions.create(
             model=self.model,
             temperature=0.2,
