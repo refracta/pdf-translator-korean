@@ -39,13 +39,7 @@ def draw_text(draw, processed_text, current_fnt, font_size, width, ygain):
         words = l.split(" ")
         words_length = sum(draw.textlength(w, font=current_fnt) for w in words)
         if first: words_length += 40
-        # calculate the amount of space to insert between words. there are
-        # (number of words - 1) spaces in a line. if there is only a single
-        # word we do not add extra spacing.
-        if len(words) > 1:
-            space_length = (width - words_length) / (len(words) - 1)
-        else:
-            space_length = 0
+        space_length = (width - words_length) / (len(words))
         if (space_length > 40): space_length = font_size/2.4
         x = 0
         if first: x+= 40
