@@ -14,3 +14,4 @@ ocr:
 
 font:
   type: 'nanum'  # use 'nanum' for NanumMyeongjo
+  dpi: 200       # base dpi used to scale fonts

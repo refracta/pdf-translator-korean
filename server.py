@@ -26,6 +26,7 @@ cfg = load_config('config.yaml', 'config.dev.yaml')
 translator = load_translator(cfg['translator'])
 layout_engine = load_layout_engine(cfg['layout'])
 ocr_engine = load_ocr_engine(cfg['ocr'])
+cfg['font'].setdefault('dpi', cfg.get('layout', {}).get('dpi', 200))
 font_engine = load_font_engine(cfg['font'])
 
 
