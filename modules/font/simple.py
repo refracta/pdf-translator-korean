@@ -6,10 +6,13 @@ from utils import fill_text_to_width
 from .base import FontBase
 
 class SimpleFont(FontBase):
-    FONT_SIZE = 29
+    BASE_FONT_SIZE = 29
 
     def init(self, cfg: dict):
         self.cfg = cfg
+        self.dpi = cfg.get('dpi', 200)
+        self.base_font_size = cfg.get('base_size', self.BASE_FONT_SIZE)
+        self.FONT_SIZE = self.base_font_size * (self.dpi / 200)
  
     def get_all_fonts(self, layout):
         for _, line in tqdm(enumerate(layout)):
@@ -31,14 +34,15 @@ class SimpleFont(FontBase):
         line_cnt = line.line_cnt if line.line_cnt and line.line_cnt > 0 else 1
 
         font_size = height / line_cnt
-        if font_size > self.FONT_SIZE + 6:
-            font_size = self.FONT_SIZE + 6
+        step = 6 * (self.dpi / 200)
+        if font_size > self.FONT_SIZE + step:
+            font_size = self.FONT_SIZE + step
         elif font_size > self.FONT_SIZE:
             font_size = self.FONT_SIZE
-        elif font_size > self.FONT_SIZE - 3:
-            font_size = self.FONT_SIZE - 3
+        elif font_size > self.FONT_SIZE - step / 2:
+            font_size = self.FONT_SIZE - step / 2
         else:
-            font_size = self.FONT_SIZE - 6
+            font_size = self.FONT_SIZE - step
 
         ygain = int(font_size * 1.15)
 
