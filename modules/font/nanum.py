@@ -1,5 +1,6 @@
 import numpy as np
 from tqdm import tqdm
+from utils import fw_fill
 from .base import FontBase
 
 class NanumFont(FontBase):
@@ -9,35 +10,44 @@ class NanumFont(FontBase):
         self.cfg = cfg
 
     def get_all_fonts(self, layout):
-        for i, line in tqdm(enumerate(layout)):
+        for _, line in tqdm(enumerate(layout)):
             if line.type in ["text", "list", "title"]:
-                image = line.image
-                family, size, ygain = self.get_font_info(image, line.line_cnt)
+                family, size, ygain = self.get_font_info(line)
                 line.font = {"family": family, "size": size, "ygain": ygain}
         return layout
 
-    def get_font_info(self, image: np.ndarray, line_cnt: int = 1):
+    def get_font_info(self, line) -> tuple[str, int, int]:
+        image = line.image
+        text = line.translated_text or ""
+
         if image.ndim == 3:
             height, width, _ = image.shape
         else:
             height, width = image.shape
 
-        if not line_cnt or line_cnt <= 0:
-            line_cnt = 1
+        line_cnt = line.line_cnt if line.line_cnt and line.line_cnt > 0 else 1
 
         font_size = height / line_cnt
-        print(f"width: {width}, height: {height}, fs: {font_size}")
-        if font_size > 46:
+        if font_size > self.FONT_SIZE + 6:
             font_size = self.FONT_SIZE + 6
-            ygain = 40
-        elif font_size > 31:
+        elif font_size > self.FONT_SIZE:
             font_size = self.FONT_SIZE
-            ygain = 33
-        elif font_size > 28.5:
+        elif font_size > self.FONT_SIZE - 3:
             font_size = self.FONT_SIZE - 3
-            ygain = 30
         else:
             font_size = self.FONT_SIZE - 6
-            ygain = 22
 
-        return 'NanumMyeongjo.ttf', font_size, ygain
+        ygain = int(font_size * 1.15)
+
+        max_width_chars = max(1, int(width / (font_size / 2.4)) - 1)
+        processed = fw_fill(text, width=max_width_chars)
+        lines = len(processed.split("\n"))
+
+        while lines * ygain > height and font_size > 10:
+            font_size -= 1
+            ygain = int(font_size * 1.15)
+            max_width_chars = max(1, int(width / (font_size / 2.4)) - 1)
+            processed = fw_fill(text, width=max_width_chars)
+            lines = len(processed.split("\n"))
+
+        return "NanumMyeongjo.ttf", int(font_size), int(ygain)
