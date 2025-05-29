@@ -36,10 +36,6 @@ def draw_text(draw, processed_text, current_fnt, font_size, width, ygain):
     """Draw text on an image without justifying spaces."""
 
     y = 0
-    lines = processed_text.split("\n")
-    indent_first = 40 if len(lines) > 1 else 0
-
-    for i, line in enumerate(lines):
-        x = indent_first if i == 0 else 0
-        draw.text((x, y), line, font=current_fnt, fill="black")
+    for line in processed_text.split("\n"):
+        draw.text((0, y), line, font=current_fnt, fill="black")
         y += ygain
