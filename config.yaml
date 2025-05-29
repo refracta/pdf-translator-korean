@@ -12,4 +12,5 @@ ocr:
   device: 'cuda'
 
 font:
-  type: 'simple'
+  type: 'nanum'  # use 'nanum' for NanumMyeongjo
+
