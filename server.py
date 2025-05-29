@@ -1,5 +1,6 @@
 import tempfile
 from pathlib import Path
+import math
 from typing import List, Tuple, Union
 import matplotlib.pyplot as plt
 import numpy as np
@@ -226,13 +227,13 @@ class TranslateApi:
 
                     height = line.bbox[3] - line.bbox[1]
                     width = line.bbox[2] - line.bbox[0]
-                    
+
                     fnt = ImageFont.truetype('fonts/' + line.font['family'], line.font['size'])
                     char_w = average_char_width(fnt)
-                    # calculate text wrapping
+                    # calculate text wrapping using all available width
                     processed_text = fw_fill(
                         line.translated_text,
-                        width=max(1, int(width / char_w)),
+                        width=max(1, math.ceil(width / char_w)),
                     )
                     
                     # create new image block with new text
