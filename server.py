@@ -15,7 +15,7 @@ from tqdm import tqdm
 import gradio as gr
 
 
-from utils import fw_fill, create_gradio_app, load_config, draw_text
+from utils import fw_fill, create_gradio_app, load_config, draw_text, average_char_width
 from modules import load_translator, load_layout_engine, load_ocr_engine, load_font_engine
 
 
@@ -222,14 +222,13 @@ class TranslateApi:
                     height = line.bbox[3] - line.bbox[1]
                     width = line.bbox[2] - line.bbox[0]
                     
+                    fnt = ImageFont.truetype('fonts/' + line.font['family'], line.font['size'])
+                    char_w = average_char_width(fnt)
                     # calculate text wrapping
                     processed_text = fw_fill(
                         line.translated_text,
-                        width=int((width) / ((line.font['size'])/2.4))
-                        - 1,
+                        width=max(1, int(width / char_w)),
                     )
-
-                    fnt = ImageFont.truetype('fonts/' + line.font['family'], line.font['size']) 
                     
                     # create new image block with new text
                     new_block = Image.new("RGB", ( width, height ), color=(255, 255, 255))
