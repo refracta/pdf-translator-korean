@@ -27,6 +27,10 @@ class SimpleFont(FontBase):
         else:  # For a 2D image (grayscale)
             height, width = image.shape
 
+        if not line_cnt or line_cnt <= 0:
+            # Avoid division by zero if OCR fails to detect any lines
+            line_cnt = 1
+
         font_size = height / line_cnt
 
         print(f"width: {width}, height: {height}, fs: {font_size}")
