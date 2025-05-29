@@ -23,7 +23,8 @@
    - PaddleOCR
 
 - Font recognition engines:
-   - /
+  - simple (TimesNewRoman)
+  - nanum (NanumMyeongjo)
 
 
 
