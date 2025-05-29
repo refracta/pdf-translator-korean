@@ -9,7 +9,6 @@ import yaml
 
 __all__ = ["fw_fill", "fw_wrap", "OCRModel", "LayoutAnalyzer", "average_char_width"]
 
-
 def average_char_width(font: ImageFont.FreeTypeFont) -> float:
     """Return an estimated average character width for the given font.
 
