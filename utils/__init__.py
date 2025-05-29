@@ -9,18 +9,24 @@ import yaml
 
 __all__ = ["fw_fill", "fw_wrap", "OCRModel", "LayoutAnalyzer", "average_char_width"]
 
+def average_char_width(font: ImageFont.FreeTypeFont) -> float:
+    """Return an estimated average character width for the given font.
 
-def average_char_width(font: ImageFont.FreeTypeFont) -> int:
-    """Return an estimated average character width for the given font."""
+    `getbbox` can return relatively large widths compared to the
+    characters actually rendered on the page. Empirically, multiplying
+    the measured width by ``0.55`` gives values close to the previous
+    constant-based calculation.
+    """
     try:
         bbox = font.getbbox("가")
         width = bbox[2] - bbox[0]
-        if width > 0:
-            return width
+        if width <= 0:
+            raise ValueError
     except Exception:
-        pass
-    bbox = font.getbbox("A")
-    return bbox[2] - bbox[0]
+        bbox = font.getbbox("A")
+        width = bbox[2] - bbox[0]
+
+    return width * 0.55
 
 def load_config(base_config_path, override_config_path):
     with open(base_config_path, 'r') as base_file:
