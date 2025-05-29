@@ -33,18 +33,13 @@ def load_config(base_config_path, override_config_path):
 
 
 def draw_text(draw, processed_text, current_fnt, font_size, width, ygain):
+    """Draw text on an image without justifying spaces."""
+
     y = 0
-    first = len(processed_text.split("\n")) > 1
-    for l in processed_text.split("\n"):
-        words = l.split(" ")
-        words_length = sum(draw.textlength(w, font=current_fnt) for w in words)
-        if first: words_length += 40
-        space_length = (width - words_length) / (len(words))
-        if (space_length > 40): space_length = font_size/2.4
-        x = 0
-        if first: x+= 40
-        for word in words:
-            draw.text((x, y), word, font=current_fnt, fill="black")
-            x += draw.textlength(word, font=current_fnt) + space_length
+    lines = processed_text.split("\n")
+    indent_first = 40 if len(lines) > 1 else 0
+
+    for i, line in enumerate(lines):
+        x = indent_first if i == 0 else 0
+        draw.text((x, y), line, font=current_fnt, fill="black")
         y += ygain
-        first = False
