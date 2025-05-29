@@ -7,29 +7,42 @@ from PIL import ImageFont
 
 import yaml
 
-__all__ = ["fw_fill", "fw_wrap", "OCRModel", "LayoutAnalyzer", "average_char_width"]
+__all__ = ["fw_fill", "fw_wrap", "OCRModel", "LayoutAnalyzer", "fill_text_to_width"]
 
-def average_char_width(font: ImageFont.FreeTypeFont) -> float:
-    """Return an estimated average character width for the given font.
 
-    The bounding boxes returned by PIL tend to overestimate individual
-    character width. To compensate, measure a longer sample string and
-    divide by the number of characters.
-    """
+def _text_width(font: ImageFont.FreeTypeFont, text: str) -> int:
+    """Return the pixel width of ``text`` for the given font."""
+    bbox = font.getbbox(text)
+    return bbox[2] - bbox[0]
 
-    try:
-        sample = "가나다라마바사아자차"  # 10 Hangul characters
-        bbox = font.getbbox(sample)
-        width = bbox[2] - bbox[0]
-        if width > 0:
-            return width / len(sample)
-    except Exception:
-        pass
 
-    # Fallback to ASCII if Hangul is unavailable
-    sample = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    bbox = font.getbbox(sample)
-    return (bbox[2] - bbox[0]) / len(sample)
+def fill_text_to_width(text: str, font: ImageFont.FreeTypeFont, width: int) -> str:
+    """Wrap ``text`` so that each line fits within ``width`` pixels."""
+    wrapped_lines = []
+    for paragraph in text.split("\n"):
+        words = paragraph.split(" ")
+        current_line = ""
+        for word in words:
+            candidate = word if current_line == "" else current_line + " " + word
+            if _text_width(font, candidate) <= width:
+                current_line = candidate
+            else:
+                if current_line:
+                    wrapped_lines.append(current_line)
+                # if a single word is too long, break it character by character
+                if _text_width(font, word) <= width:
+                    current_line = word
+                else:
+                    tmp = ""
+                    for ch in word:
+                        if _text_width(font, tmp + ch) <= width:
+                            tmp += ch
+                        else:
+                            wrapped_lines.append(tmp)
+                            tmp = ch
+                    current_line = tmp
+        wrapped_lines.append(current_line)
+    return "\n".join(wrapped_lines)
 
 def load_config(base_config_path, override_config_path):
     with open(base_config_path, 'r') as base_file:
