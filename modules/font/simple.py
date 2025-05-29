@@ -12,8 +12,10 @@ class SimpleFont(FontBase):
         self.cfg = cfg
         self.dpi = cfg.get('dpi', 200)
         self.base_font_size = cfg.get('base_size', self.BASE_FONT_SIZE)
-        # Scale the font size more aggressively for high DPI screens
-        self.FONT_SIZE = self.base_font_size * (self.dpi / 200) ** 1.5
+        # Scale the font size even more aggressively for high DPI screens.
+        # Using a cubic scaling factor means 400 DPI will produce roughly
+        # eight times the font size compared to 200 DPI.
+        self.FONT_SIZE = self.base_font_size * (self.dpi / 200) ** 3
  
     def get_all_fonts(self, layout):
         for _, line in tqdm(enumerate(layout)):
@@ -35,8 +37,9 @@ class SimpleFont(FontBase):
         line_cnt = line.line_cnt if line.line_cnt and line.line_cnt > 0 else 1
 
         font_size = height / line_cnt
-        # Allow fonts to grow more when DPI is high
-        step = 6 * (self.dpi / 200) ** 1.5
+        # Allow fonts to grow more when DPI is high. The cubic scaling
+        # keeps step proportional to the font size increase at higher DPI.
+        step = 6 * (self.dpi / 200) ** 3
         if font_size > self.FONT_SIZE + step:
             font_size = self.FONT_SIZE + step
         elif font_size > self.FONT_SIZE:

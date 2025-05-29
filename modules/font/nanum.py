@@ -12,9 +12,10 @@ class NanumFont(FontBase):
         self.cfg = cfg
         self.dpi = cfg.get('dpi', 200)
         self.base_font_size = cfg.get('base_size', self.BASE_FONT_SIZE)
-        # Scale the base font size with DPI.  The exponent makes fonts
-        # noticeably larger at high DPI values.
-        self.FONT_SIZE = self.base_font_size * (self.dpi / 200) ** 1.5
+        # Scale the base font size with DPI.  Use a cubic factor so
+        # that doubling DPI results in roughly eight times larger fonts
+        # to better match the increased canvas size.
+        self.FONT_SIZE = self.base_font_size * (self.dpi / 200) ** 3
 
     def get_all_fonts(self, layout):
         for _, line in tqdm(enumerate(layout)):
@@ -35,8 +36,9 @@ class NanumFont(FontBase):
         line_cnt = line.line_cnt if line.line_cnt and line.line_cnt > 0 else 1
 
         font_size = height / line_cnt
-        # Allow a wider range of font sizes for high DPI values
-        step = 6 * (self.dpi / 200) ** 1.5
+        # Allow a wider range of font sizes for high DPI values. Keep
+        # the step proportional to the cubic DPI scaling.
+        step = 6 * (self.dpi / 200) ** 3
         if font_size > self.FONT_SIZE + step:
             font_size = self.FONT_SIZE + step
         elif font_size > self.FONT_SIZE:
