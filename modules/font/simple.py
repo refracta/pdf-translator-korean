@@ -43,7 +43,7 @@ class SimpleFont(FontBase):
 
         fnt = ImageFont.truetype('fonts/TimesNewRoman.ttf', int(font_size))
         char_w = average_char_width(fnt)
-        max_width_chars = max(1, int(width / char_w) - 1)
+        max_width_chars = max(1, int(width / char_w))
         processed = fw_fill(text, width=max_width_chars)
         lines = len(processed.split("\n"))
 
@@ -52,7 +52,7 @@ class SimpleFont(FontBase):
             ygain = int(font_size * 1.15)
             fnt = ImageFont.truetype('fonts/TimesNewRoman.ttf', int(font_size))
             char_w = average_char_width(fnt)
-            max_width_chars = max(1, int(width / char_w) - 1)
+            max_width_chars = max(1, int(width / char_w))
             processed = fw_fill(text, width=max_width_chars)
             lines = len(processed.split("\n"))
 

@@ -227,7 +227,7 @@ class TranslateApi:
                     # calculate text wrapping
                     processed_text = fw_fill(
                         line.translated_text,
-                        width=max(1, int(width / char_w) - 1),
+                        width=max(1, int(width / char_w)),
                     )
                     
                     # create new image block with new text

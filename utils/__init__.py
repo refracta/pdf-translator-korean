@@ -12,21 +12,24 @@ __all__ = ["fw_fill", "fw_wrap", "OCRModel", "LayoutAnalyzer", "average_char_wid
 def average_char_width(font: ImageFont.FreeTypeFont) -> float:
     """Return an estimated average character width for the given font.
 
-    `getbbox` can return relatively large widths compared to the
-    characters actually rendered on the page. Empirically, multiplying
-    the measured width by ``0.55`` gives values close to the previous
-    constant-based calculation.
+    The bounding boxes returned by PIL tend to overestimate individual
+    character width. To compensate, measure a longer sample string and
+    divide by the number of characters.
     """
-    try:
-        bbox = font.getbbox("가")
-        width = bbox[2] - bbox[0]
-        if width <= 0:
-            raise ValueError
-    except Exception:
-        bbox = font.getbbox("A")
-        width = bbox[2] - bbox[0]
 
-    return width * 0.55
+    try:
+        sample = "가나다라마바사아자차"  # 10 Hangul characters
+        bbox = font.getbbox(sample)
+        width = bbox[2] - bbox[0]
+        if width > 0:
+            return width / len(sample)
+    except Exception:
+        pass
+
+    # Fallback to ASCII if Hangul is unavailable
+    sample = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    bbox = font.getbbox(sample)
+    return (bbox[2] - bbox[0]) / len(sample)
 
 def load_config(base_config_path, override_config_path):
     with open(base_config_path, 'r') as base_file:
