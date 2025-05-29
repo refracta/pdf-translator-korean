@@ -12,7 +12,7 @@ class DiTLayout(LayoutBase):
             model_root_dir= Path("models/unilm"), device=cfg['device']
         )
 
-        self.DPI = cfg['DPI'] if 'DPI' in cfg else 200
+        self.DPI = cfg.get('dpi', 200)
  
     def get_layout(self, pdf_path_or_bytes: str, p_from, p_to) -> str:
         
