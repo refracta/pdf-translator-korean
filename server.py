@@ -96,6 +96,7 @@ class TranslateApi:
         p_to: int = Form(...),
         side_by_side: bool = Form(...),
         dpi: int = Form(None),
+        debug: bool = Form(False),
     ) -> FileResponse:
         """API endpoint for translating PDF files."""
         input_pdf_data = await input_pdf.read()
@@ -109,6 +110,7 @@ class TranslateApi:
             p_to,
             side_by_side,
             dpi,
+            debug,
         )
 
         return FileResponse(
@@ -132,6 +134,7 @@ class TranslateApi:
         p_to,
         side_by_side,
         dpi: int,
+        debug: bool,
     ) -> None:
         """Backend function for translating PDF files.
 
@@ -179,6 +182,7 @@ class TranslateApi:
                     image=image,
                     result = result,
                     reached_references=reached_references,
+                    debug=debug,
                 )
                 if side_by_side:
                     fig, ax = plt.subplots(1, 2, figsize=(20, 14))
@@ -212,7 +216,8 @@ class TranslateApi:
         image,
         result,
         reached_references: bool,
-    ) -> Tuple[np.ndarray, np.ndarray, bool]:
+        debug: bool = False,
+    ) -> Tuple[np.ndarray, bool]:
         """Translate one page of the PDF file."""
         img = np.array(image, dtype=np.uint8)
         for line in result:
@@ -251,6 +256,14 @@ class TranslateApi:
             else:
                 # TODO: add list, table and image translation support
                 print(f"\n\n\nunknown: {line.type}")
+
+        if debug:
+            debug_img = Image.fromarray(img)
+            draw_dbg = ImageDraw.Draw(debug_img)
+            for line in result:
+                x1, y1, x2, y2 = map(int, line.bbox)
+                draw_dbg.rectangle([x1, y1, x2, y2], outline="red", width=2)
+            img = np.array(debug_img)
 
         return img, reached_references
 

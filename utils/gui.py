@@ -16,6 +16,7 @@ def translate_request(
     to_page: int,
     both: bool,
     dpi: int,
+    debug: bool,
 ) -> tuple[Path]:
     """Sends a POST request to the translator server to translate a PDF.
 
@@ -40,6 +41,7 @@ def translate_request(
             "p_to": to_page,
             "side_by_side": both,
             "dpi": dpi,
+            "debug": debug,
         },
     )
 
@@ -65,13 +67,14 @@ def create_gradio_app(langs, default_dpi: int = 200):
             to_page = gr.Number(label='to page')
             dpi = gr.Slider(label='dpi', minimum=50, maximum=800, value=default_dpi)
             both = gr.Checkbox(label='render side by side', value=True)
+            debug = gr.Checkbox(label='debug', value=False)
 
             btn = gr.Button(value="convert")
             translated_file = gr.File(label="translated fie", file_types=[".pdf"])
 
             btn.click(
                 translate_request,
-                inputs=[file, from_lang, to_lang, from_page, to_page, both, dpi],
+                inputs=[file, from_lang, to_lang, from_page, to_page, both, dpi, debug],
                 outputs=[translated_file],
             )
 
