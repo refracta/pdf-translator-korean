@@ -79,7 +79,14 @@ def draw_text(draw, processed_text, current_fnt, font_size, width, ygain):
             y += ygain
             continue
         line_text_width = sum(_text_width(current_fnt, w) for w in words)
-        space_slots = max(len(words) - 1, 1)
+
+        # Left-align short lines to avoid excessive spacing when justifying
+        if len(words) <= 2 or line_text_width / width < 0.6:
+            draw.text((0, y), " ".join(words), font=current_fnt, fill="black")
+            y += ygain
+            continue
+
+        space_slots = len(words) - 1
         total_space = max(width - line_text_width, 0)
         base_space = total_space // space_slots
         extra_space = total_space % space_slots
