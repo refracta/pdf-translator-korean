@@ -69,9 +69,27 @@ def load_config(base_config_path, override_config_path):
 
 
 def draw_text(draw, processed_text, current_fnt, font_size, width, ygain):
-    """Draw text on an image without justifying spaces."""
+    """Draw text on an image with justification."""
 
+    lines = processed_text.split("\n")
     y = 0
-    for line in processed_text.split("\n"):
-        draw.text((0, y), line, font=current_fnt, fill="black")
+    for line in lines:
+        words = line.split()
+        if not words:
+            y += ygain
+            continue
+        line_text_width = sum(_text_width(current_fnt, w) for w in words)
+        space_slots = max(len(words) - 1, 1)
+        total_space = max(width - line_text_width, 0)
+        base_space = total_space // space_slots
+        extra_space = total_space % space_slots
+
+        x = 0
+        for idx, word in enumerate(words):
+            draw.text((x, y), word, font=current_fnt, fill="black")
+            x += _text_width(current_fnt, word)
+            if idx < len(words) - 1:
+                x += base_space
+                if idx < extra_space:
+                    x += 1
         y += ygain
