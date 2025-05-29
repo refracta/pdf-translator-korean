@@ -1,126 +1,121 @@
-# PDF Translator
+# PDF 번역기
 
 <h5 align="center">
-  This repository offers an WebUI and API endpoint that translates PDF files using openai GPT, preserving the original layout.
+  이 저장소는 OpenAI GPT를 사용해 PDF 파일을 원본 레이아웃을 유지한 채 번역하는 WebUI와 API 엔드포인트를 제공합니다.
 </h5>
 
 <p align="center">
   <img src="./assets/example.png" width=70%>
 </p>
 
-## Features
+## 특징
 
-- translate PDF files while preserving layout
+- PDF 파일의 레이아웃을 최대한 유지하며 번역
 
-- translation engines:
-   - openAI (default)
-   - google translate
+- 번역 엔진:
+   - 구글 번역
+   - OpenAI (최고, 기본)
 
-- layout recognition engines:
+- 레이아웃 인식 엔진:
    - UniLM DiT
 
-- OCR engines:
+- OCR 엔진:
    - PaddleOCR
 
-- Font recognition engines:
+- 폰트 인식 엔진:
   - simple (TimesNewRoman)
   - nanum (NanumMyeongjo)
 
+## 설치
 
-
-## Installation
-
-1. **Clone this repository**
+1. **저장소 클론**
 
 ```bash
-   git clone https://github.com/ppisljar/pdf_translator.git
+   git clone https://github.com/refracta/pdf-translator-korean.git
    cd pdf_translator
 ```
 
-2. **Edit config.yaml and enter your OpenAI API key**
-Enter your key under `openai_api_key`.
+2. **config.yaml 수정 후 OpenAI API 키 입력**
+type을 'openai'로 변경하고 `openai_api_key`에 키를 입력합니다.
+변경하지 않을 경우 번역 엔진은 기본적으로 구글 번역을 사용합니다.
 
 
-### docker installation
+### 도커 설치
 
-3. **Build the docker image via Makefile**
+3. **Makefile을 이용해 도커 이미지 빌드**
 
 ```bash
    make build
 ```
 
-4. **Run the docker container via Makefile**
+4. **Makefile을 이용해 도커 컨테이너 실행**
 
 ```bash
    make run
 ```
 
-### venv installation
+### 가상 환경 설치
 
-3. **create venv and activte**
+3. **가상 환경 생성 및 활성화**
 
-prerequesites:
-- ffmpeg, ... possibly more, check Dockerfile if you are running into issues
+필수 패키지:
+- ffmpeg 등... 문제가 발생한다면 Dockerfile을 참고하세요.
 
 ```bash
 python3 -m venv .
 source bin/activate
 ```
 
-4. **install requirements**
+4. **필수 패키지 설치**
 
 ```bash
 pip3 install -r requirements.txt
 pip3 install "git+https://github.com/facebookresearch/detectron2.git"
 ```
 
-5. **get models**
+5. **모델 다운로드**
 
 ```bash
 make get_models
 ```
 
-6. **run**
+6. **실행**
 
 ```bash
 python3 server.py
 ```
 
-## GUI Usage
+## GUI 사용
 
-Access to GUI via browser.
+브라우저로 접속합니다.
 
 ```bash
 http://localhost:8765
 ```
 
-## Requirements
+## 요구 사항
 
-- NVIDIA GPU **(currently only support NVIDIA GPU)**
+- NVIDIA GPU **(현재는 NVIDIA GPU만 지원)**
 - Docker
 
-## License
+## 라이선스
 
-**This repository does not allow commercial use.**
+**이 저장소는 상업적 사용을 허가하지 않습니다.**
 
-This repository is licensed under CC BY-NC 4.0. See [LICENSE](./LICENSE.md) for more information.
+이 저장소는 CC BY-NC 4.0 라이선스 하에 있습니다. 자세한 내용은 [LICENSE](./LICENSE.md)를 참고하세요.
 
-## TODOs
+## TODO
 
-- [ ] Make possible to highlight the translated text
-- [ ] Support M1 Mac or CPU
-- [ ] switch to VGT for layout detection
-- [ ] add font detection (family/style/color/size/alignment)
-- [ ] add support for translating lists
-- [ ] add support for translating tables
-- [ ] add support for translating text within images
+- [ ] 번역된 텍스트 하이라이트 기능
+- [ ] M1 Mac 또는 CPU 지원
+- [ ] 레이아웃 감지를 VGT로 전환
+- [ ] 글꼴 감지 (종류/스타일/색상/크기/정렬)
+- [ ] 목록 번역 지원
+- [ ] 테이블 번역 지원
+- [ ] 이미지 내 텍스트 번역 지원
 
-      
-## References
+## 참고
 
-- based on https://github.com/discus0434/pdf-translator
-
-- For PDF layout analysis, using [DiT](https://github.com/microsoft/unilm).
-
-- For PDF to text conversion, using [PaddlePaddle](https://github.com/PaddlePaddle/PaddleOCR) model.
-
+- 기반 프로젝트: https://github.com/discus0434/pdf-translator
+- PDF 레이아웃 분석: [DiT](https://github.com/microsoft/unilm) 사용
+- PDF를 텍스트로 변환: [PaddlePaddle](https://github.com/PaddlePaddle/PaddleOCR) 모델 사용
