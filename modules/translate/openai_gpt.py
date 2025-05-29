@@ -97,13 +97,14 @@ langs = [
 class TranslateOpenAIGPT(TranslateBase):
     def init(self, cfg: dict):
         self.client = OpenAI(api_key=cfg['openai_api_key'])
+        self.model = cfg.get('model', 'gpt-4o')
 
     def get_languages(self):
         return langs
 
-    def translate(self, text: str, from_lang='ENGLISH', to_lang='SLOVENIAN') -> str:
+    def translate(self, text: str, from_lang='ENGLISH', to_lang='KOREAN') -> str:
         response = self.client.chat.completions.create(
-            model='gpt-4-1106-preview',
+            model=self.model,
             temperature=0.2,
             messages=[
                 { 'role': 'system', 'content': system_prompt(from_lang, to_lang) },

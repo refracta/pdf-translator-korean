@@ -13,8 +13,8 @@
 - PDF 파일의 레이아웃을 최대한 유지하며 번역
 
 - 번역 엔진:
-   - 구글 번역 (기본)
-   - OpenAI (최고)
+   - 구글 번역
+   - OpenAI (최고, 기본)
 
 - 레이아웃 인식 엔진:
    - UniLM DiT
@@ -23,7 +23,8 @@
    - PaddleOCR
 
 - 폰트 인식 엔진:
-   - /
+  - simple (TimesNewRoman)
+  - nanum (NanumMyeongjo)
 
 ## 설치
 
@@ -37,6 +38,7 @@
 2. **config.yaml 수정 후 OpenAI API 키 입력**
 type을 'openai'로 변경하고 `openai_api_key`에 키를 입력합니다.
 변경하지 않을 경우 번역 엔진은 기본적으로 구글 번역을 사용합니다.
+
 
 ### 도커 설치
 

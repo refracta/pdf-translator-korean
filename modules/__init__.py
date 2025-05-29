@@ -33,5 +33,10 @@ def load_font_engine(cfg: dict):
         engine = SimpleFont()
         engine.init(cfg)
         return engine
-    
-    raise("unknown ocr engine")
+    if cfg['type'] == 'nanum':
+        from .font.nanum import NanumFont
+        engine = NanumFont()
+        engine.init(cfg)
+        return engine
+
+    raise("unknown font engine")
