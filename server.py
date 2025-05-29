@@ -58,7 +58,7 @@ class TranslateApi:
         Tokenizer for the translation model
     """
 
-    DPI = 200
+    DPI = cfg.get('layout', {}).get('dpi', 200)
 
     def __init__(self, model_root_dir: Path = Path("/app/models/")):
         self.app = FastAPI()
@@ -74,7 +74,9 @@ class TranslateApi:
             methods=["GET"],
         )
 
-        gradioapp = create_gradio_app(translator.get_languages())
+        gradioapp = create_gradio_app(
+            translator.get_languages(), cfg.get('layout', {}).get('dpi', 200)
+        )
         gr.mount_gradio_app(self.app, gradioapp, '/')
 
         self.temp_dir = tempfile.TemporaryDirectory()
@@ -85,10 +87,29 @@ class TranslateApi:
         """Run the API server"""
         uvicorn.run(self.app, host="0.0.0.0", port=8765)
 
-    async def translate_pdf(self, input_pdf: UploadFile = File(...), from_lang: str = Form(...), to_lang: str = Form(...), p_from: int = Form(...), p_to: int = Form(...), side_by_side: bool = Form(...) ) -> FileResponse:
+    async def translate_pdf(
+        self,
+        input_pdf: UploadFile = File(...),
+        from_lang: str = Form(...),
+        to_lang: str = Form(...),
+        p_from: int = Form(...),
+        p_to: int = Form(...),
+        side_by_side: bool = Form(...),
+        dpi: int = Form(None),
+    ) -> FileResponse:
         """API endpoint for translating PDF files."""
         input_pdf_data = await input_pdf.read()
-        self._translate_pdf(input_pdf_data, self.temp_dir_name, from_lang, to_lang, p_from, p_to, side_by_side)
+        dpi = dpi or self.DPI
+        self._translate_pdf(
+            input_pdf_data,
+            self.temp_dir_name,
+            from_lang,
+            to_lang,
+            p_from,
+            p_to,
+            side_by_side,
+            dpi,
+        )
 
         return FileResponse(
             self.temp_dir_name / "translated.pdf", media_type="application/pdf"
@@ -102,7 +123,15 @@ class TranslateApi:
         return {"message": "temp dir cleared"}
 
     def _translate_pdf(
-        self, pdf_path_or_bytes: Union[Path, bytes], output_dir: Path, from_lang, to_lang, p_from, p_to, side_by_side
+        self,
+        pdf_path_or_bytes: Union[Path, bytes],
+        output_dir: Path,
+        from_lang,
+        to_lang,
+        p_from,
+        p_to,
+        side_by_side,
+        dpi: int,
     ) -> None:
         """Backend function for translating PDF files.
 
@@ -127,9 +156,9 @@ class TranslateApi:
         """
 
         if isinstance(pdf_path_or_bytes, Path):
-            pdf_images = convert_from_path(pdf_path_or_bytes, dpi=self.DPI)
+            pdf_images = convert_from_path(pdf_path_or_bytes, dpi=dpi)
         else:
-            pdf_images = convert_from_bytes(pdf_path_or_bytes, dpi=self.DPI)
+            pdf_images = convert_from_bytes(pdf_path_or_bytes, dpi=dpi)
         
         pdf_files = []
         
@@ -162,7 +191,7 @@ class TranslateApi:
                     ax.imshow(img)
                     ax.axis("off")
                 plt.tight_layout()
-                plt.savefig(output_path, format="pdf", dpi=self.DPI)
+                plt.savefig(output_path, format="pdf", dpi=dpi)
                 plt.close(fig)
             else:
                 (
